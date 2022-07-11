@@ -9,5 +9,5 @@ node_modules/
 log/
 yarn-error.log
 
-# VSCode junk
-**.code-workspace
+# Ignore VSCode workspace files
+*.code-workspace
