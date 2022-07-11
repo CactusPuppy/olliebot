@@ -1,0 +1,13 @@
+# Keep environment variables secret
+.env
+
+# Build artifacts
+dist/
+node_modules/
+
+# Log files do not need to be in source control
+log/
+yarn-error.log
+
+# VSCode junk
+**.code-workspace
