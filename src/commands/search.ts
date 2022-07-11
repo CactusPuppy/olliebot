@@ -8,7 +8,7 @@ export default class Search extends Command {
     super("search", "Search Workshop.codes for codes or wiki articles");
   }
 
-  getData() {
+  getJSONable() {
     const builder = super.getBaseCommandBuilder();
     return builder
       .addSubcommand(subcommand =>

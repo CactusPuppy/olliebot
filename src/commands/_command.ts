@@ -30,7 +30,7 @@ export default abstract class Command {
    * @returns Entity on which `toJSON` can be called to
    *          retrieve a RESTPostAPIApplicationCommandsJSONBody
    */
-  getData() : Pick<SlashCommandBuilder, "toJSON"> {
+  getJSONable() : Pick<SlashCommandBuilder, "toJSON"> {
     return this.getBaseCommandBuilder();
   }
 
