@@ -13,7 +13,7 @@ export const serviceName = process.env.SERVICE_NAME || "OllieBot";
 const logger = initializeDefaultLogger();
 winston.loggers.add("default", logger);
 
-const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES] });
+export const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES] });
 
 client.once("ready", () => {
   // logger.info("OllieBot is ready!");
