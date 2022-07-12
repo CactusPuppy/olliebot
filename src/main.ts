@@ -19,6 +19,7 @@ client.once("ready", () => {
   logger.info("OllieBot is ready!");
 });
 
+// Register handler for slash commands
 import Command from "./commands/_command";
 export const commands : Collection<string, Command> = new Collection();
 const commandFiles = fs.readdirSync("./dist/commands").filter(file => !file.startsWith("_")).filter(file => file.endsWith(".js"));
@@ -30,7 +31,6 @@ commandFiles.forEach(file =>
     })
 );
 
-// Register handler for slash commands
 client.on("interactionCreate", async interaction => {
   if (!interaction.isCommand()) return;
 
