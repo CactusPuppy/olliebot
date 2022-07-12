@@ -16,7 +16,7 @@ winston.loggers.add("default", logger);
 export const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES] });
 
 client.once("ready", () => {
-  // logger.info("OllieBot is ready!");
+  logger.info("OllieBot is ready!");
 });
 
 import Command from "./commands/_command";
