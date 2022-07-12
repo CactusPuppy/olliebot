@@ -1,1 +1,1 @@
-worker: yarn preview
+worker: yarn start
