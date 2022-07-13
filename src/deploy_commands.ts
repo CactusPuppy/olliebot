@@ -21,6 +21,6 @@ const commands : Array<Command> = [
 const data = commands.map((command) => command.getJSONable().toJSON());
 
 client.put(Routes.applicationGuildCommands(clientId, guildId), { body: data })
-  .then(() => console.log("Successfully registered aplication commands."));
+  .then(() => console.log("Successfully registered application commands."));
 
 
