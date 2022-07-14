@@ -30,11 +30,13 @@ export default class Search extends Command {
 
   async run(interaction: CommandInteraction<CacheType>): Promise<boolean> {
     await interaction.deferReply();
-    const query = interaction.options.getString("query");
+    let query = interaction.options.getString("query");
     if (query == null || query === "") {
       await interaction.reply("Search terms are required.");
       return false;
     }
+    // HACK: Replace dots with spaces to avoid confusing the WSC router
+    query = query.replace(".", " ");
     switch (interaction.options.getSubcommand()) {
       case "codes": {
         // Set up search URL
