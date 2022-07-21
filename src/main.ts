@@ -10,13 +10,13 @@ const token = process.env.DISCORD_BOT_TOKEN;
 export const serviceName = process.env.SERVICE_NAME || "OllieBot";
 
 // Set up logging
-const logger = initializeDefaultLogger();
-winston.loggers.add("default", logger);
+initializeDefaultLogger();
+
 
 export const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES] });
 
 client.once("ready", () => {
-  logger.info("OllieBot is ready!");
+  winston.info("OllieBot is ready!");
 });
 
 // Register handler for slash commands
@@ -45,7 +45,7 @@ client.on("interactionCreate", async interaction => {
   try {
     success = await command.run(interaction);
   } catch (error) {
-    logger.error(error);
+    winston.error(error);
   } finally {
     // eslint-disable-next-line no-unsafe-finally
     if (success || interaction.replied) return;
@@ -66,7 +66,7 @@ client.on("interactionCreate", async interaction => {
 // initialize bot
 client.login(token);
 
-function initializeDefaultLogger(): Logger {
+function initializeDefaultLogger(): void {
   const finalFormatter = format((topInfo, topOpts) => {
     return format.combine(
       format((info) => {
@@ -82,7 +82,8 @@ function initializeDefaultLogger(): Logger {
       format.printf((info) => `[${info.timestamp}] (${info.service} | ${info.level}): ${info.message}`),
     ).transform(topInfo);
   });
-  const winstonLogger = winston.createLogger({
+
+  winston.configure({
     level: "info",
     format: finalFormatter(),
     defaultMeta: { service: serviceName },
@@ -95,14 +96,14 @@ function initializeDefaultLogger(): Logger {
 
   // Log to files when not in production
   if (process.env.NODE_ENV !== "production") {
-    winstonLogger.add(new transports.File({ filename: "log/error.log", level: "error" }));
-    winstonLogger.add(new transports.File({ filename: "log/cerberus.log" }));
-    winstonLogger.exceptions.handle(new transports.File({ filename: "log/exceptions.log" }));
+    winston.add(new transports.File({ filename: "log/error.log", level: "error" }));
+    winston.add(new transports.File({ filename: "log/cerberus.log" }));
+    winston.exceptions.handle(new transports.File({ filename: "log/exceptions.log" }));
   }
 
   // If a webhook is defined, use it
   if (process.env.DISCORD_LOGS_WEBHOOK_URL) {
-    winstonLogger.add(new DiscordTransport({
+    winston.add(new DiscordTransport({
       webhook: process.env.DISCORD_LOGS_WEBHOOK_URL,
       defaultMeta: { service: serviceName },
       level: process.env.DISCORD_LOGS_LEVEL ?? "info",
@@ -111,7 +112,5 @@ function initializeDefaultLogger(): Logger {
   }
 
   // Don't stop logging after uncaught error
-  winstonLogger.exitOnError = false;
-
-  return winstonLogger;
+  winston.exitOnError = false;
 }
