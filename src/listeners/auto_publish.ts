@@ -14,7 +14,7 @@ export class AutoPublishListener extends Listener {
   }
 
   public async run(message: Message) {
-    if (!(message.channelId in AUTO_PUBLISH_CHANNELS)) return;
+    if (!AUTO_PUBLISH_CHANNELS.includes(message.channelId)) return;
 
     // Only publish from news channels
     if (!(message.channel instanceof NewsChannel)) {
