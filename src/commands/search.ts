@@ -182,7 +182,7 @@ export default class Search extends Command {
         );
     }, {
       idHints: ["999829897105133579"],
-      guildIds: [process.env.DISCORD_GUILD_ID ?? ""]
+      guildIds: process.env.DISCORD_GUILD_ID != null ? [process.env.DISCORD_GUILD_ID] : []
     });
   }
 }
