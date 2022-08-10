@@ -13,7 +13,7 @@ initializeDefaultLogger();
 const client = new SapphireClient({
   intents: ["GUILDS", "GUILD_MESSAGES"],
   logger: {
-    level: LogLevel.Debug
+    level: process.env.DEBUG == "true" ? LogLevel.Debug : LogLevel.Info
   }
 });
 
