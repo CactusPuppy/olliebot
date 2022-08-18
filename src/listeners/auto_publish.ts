@@ -23,7 +23,7 @@ export class AutoPublishListener extends Listener {
       return;
     }
     if (!message.crosspostable) {
-      winston.error(`Cannot auto-publish message ${message.id} in #${message.channel.name}.\nAm I lacking the MANAGE_MESSAGES permission in this channel?`);
+      winston.error(`Cannot auto-publish message ${message.id} in #${message.channel.name}.\nAm I lacking the MANAGE_MESSAGES or SEND_MESSAGES permission in this channel?`);
       return;
     }
 
