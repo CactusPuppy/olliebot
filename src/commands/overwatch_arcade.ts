@@ -41,8 +41,8 @@ export default class OverwatchArcade extends Command {
     const embed = new MessageEmbed()
       .setTitle("Overwatch Arcade")
       .setURL("https://overwatcharcade.today/overwatch")
+      .setThumbnail("https://raw.githubusercontent.com/OverwatchArcade/Frontend/main/static/img/ow-arcade-115.png")
       .setColor("#a2dc26")
-      .setDescription(`As of ${response.isToday ? "today" : time(createdAt, TimestampStyles.ShortDate)} (${time(createdAt, TimestampStyles.RelativeTime)})`)
       .addFields(
         [
           {
@@ -58,14 +58,20 @@ export default class OverwatchArcade extends Command {
               .join("\n")
           },
           {
+            name: "Last updated",
+            value: `${response.isToday ? "Today" : time(createdAt, TimestampStyles.ShortDate)} (${time(createdAt, TimestampStyles.RelativeTime)})`,
+            inline: true
+          },
+          {
             name: "Next update",
-            value: time(nextUpdateAt, TimestampStyles.RelativeTime)
+            value: time(nextUpdateAt, TimestampStyles.RelativeTime),
+            inline: true
           }
         ]
       )
       .setFooter({
-        text: "Powered by overwatcharcade.today",
-        iconURL: "https://raw.githubusercontent.com/OverwatchArcade/Frontend/main/static/img/ow-arcade-115.png"
+        text: `Updated by ${response.contributor.username} | Powered by overwatcharcade.today`,
+        iconURL: response.contributor.avatar
       });
 
     await interaction.reply({

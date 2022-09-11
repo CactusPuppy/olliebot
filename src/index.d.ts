@@ -51,11 +51,21 @@ export interface owtMode {
   label: string
 }
 
+export interface owtContributor {
+  username: string,
+  /** URL */
+  avatar: string,
+  /** e.g. 2022-09-11T00:00:18.8106243Z */
+  registeredAt: string,
+  group: string,
+  stats: unknown // TODO: fill later if needed
+}
+
 export interface owtOverwatchTodayData {
   isToday: boolean,
   modes: owtMode[],
   /** e.g. 2022-09-11T00:00:18.8106243 */
   createdAt: string,
-  contributor: unknown // TODO: fill later if needed
+  contributor: owtContributor
 }
 // #endregion
