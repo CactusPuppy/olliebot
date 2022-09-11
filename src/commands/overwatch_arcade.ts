@@ -1,7 +1,7 @@
 import { time, TimestampStyles } from "@discordjs/builders";
 import { ChatInputCommand, Command } from "@sapphire/framework";
 import axios from "axios";
-import { parseISO, startOfDay, addDays } from "date-fns";
+import { addDays, parseISO } from "date-fns";
 import { MessageEmbed } from "discord.js";
 import winston from "winston";
 
@@ -36,7 +36,7 @@ export default class OverwatchArcade extends Command {
     const response = await callOverwatchArcadeTodayAPI<owtOverwatchTodayData>("/overwatch/today");
 
     const createdAt = parseISO(response.createdAt);
-    const nextUpdateAt = addDays(startOfDay(Date.now()), 1);
+    const nextUpdateAt = startOfTomorrow();
 
     const embed = new MessageEmbed()
       .setTitle("Overwatch Arcade")
@@ -72,6 +72,13 @@ export default class OverwatchArcade extends Command {
       embeds: [embed]
     });
   }
+}
+
+function startOfTomorrow() {
+  let date = new Date();
+  date.setUTCHours(0, 0, 0, 0);
+  date = addDays(date, 1);
+  return date;
 }
 
 async function callOverwatchArcadeTodayAPI<D>(path: string, params?: Record<string, string | boolean | null>): Promise<D> {
