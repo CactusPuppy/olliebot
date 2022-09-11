@@ -34,7 +34,6 @@ export default class OverwatchArcade extends Command {
 
   public async chatInputRun(interaction: Command.ChatInputInteraction) {
     const response = await callOverwatchArcadeTodayAPI<owtOverwatchTodayData>("/overwatch/today");
-    console.debug({ response }); // TODO(netux): remove debug log
 
     const createdAt = parseISO(response.createdAt);
     const nextUpdateAt = addDays(startOfDay(Date.now()), 1);
