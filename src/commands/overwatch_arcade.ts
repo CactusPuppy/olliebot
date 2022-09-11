@@ -1,7 +1,7 @@
 import { time, TimestampStyles } from "@discordjs/builders";
 import { ChatInputCommand, Command } from "@sapphire/framework";
 import axios from "axios";
-import { parseISO } from "date-fns";
+import { parseISO, startOfDay, addDays } from "date-fns";
 import { MessageEmbed } from "discord.js";
 import winston from "winston";
 
@@ -37,6 +37,7 @@ export default class OverwatchArcade extends Command {
     console.debug({ response }); // TODO(netux): remove debug log
 
     const createdAt = parseISO(response.createdAt);
+    const nextUpdateAt = addDays(startOfDay(Date.now()), 1);
 
     const embed = new MessageEmbed()
       .setTitle("Overwatch Arcade")
@@ -56,6 +57,10 @@ export default class OverwatchArcade extends Command {
                 return item;
               })
               .join("\n")
+          },
+          {
+            name: "Next update",
+            value: time(nextUpdateAt, TimestampStyles.RelativeTime)
           }
         ]
       )
