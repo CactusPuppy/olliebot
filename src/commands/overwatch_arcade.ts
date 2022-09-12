@@ -26,8 +26,7 @@ export default class OverwatchArcade extends Command {
         .setName(this.name)
         .setDescription(this.description),
       {
-        // TODO(netux): populate with this command's ID
-        // idHints: [],
+        idHints: ["1018957042934874323"],
         guildIds: process.env.DISCORD_GUILD_ID != null ? [process.env.DISCORD_GUILD_ID] : []
       });
   }
