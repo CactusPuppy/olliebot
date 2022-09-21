@@ -27,9 +27,8 @@ export class AutoPublishListener extends Listener {
       return;
     }
 
-    const newMessage = await message.crosspost();
-    if (!newMessage.flags.has("CROSSPOSTED")) {
-      winston.warn(`Attempted to auto-publish message ${message.id} in #${message.channel.name}, but it looks like the message failed to publish.`);
-    }
+    await message.crosspost().catch(reason => {
+      winston.warn(`Attempted to auto-publish message ${message.id} in #${("name" in message.channel) ? message.channel.name : message.channelId}, but it looks like the message failed to publish. Reason: ${reason}`);
+    });
   }
 }
