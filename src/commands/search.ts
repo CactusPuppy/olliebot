@@ -41,7 +41,6 @@ export default class Search extends Command {
     // Execute the search
     let data = await wscSearchRequest("/search.json", {
       "search": interaction.options.getString("query"),
-      "overwatch_2": interaction.options.getBoolean("overwatch_2_only")
     });
 
     // Process the data
@@ -162,11 +161,6 @@ export default class Search extends Command {
                 .setName("query")
                 .setDescription("Terms to search for")
                 .setRequired(true)
-            )
-            .addBooleanOption((option) =>
-              option
-                .setName("overwatch_2_only")
-                .setDescription("Whether to only include posts compatible with Overwatch 2")
             )
         )
         .addSubcommand((command) =>
