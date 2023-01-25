@@ -156,10 +156,12 @@ export default class Search extends Command {
     registry.registerChatInputCommand((builder) => {
       builder
         .setName("search")
+        .setNameLocalization("ko", "검색")
         .setDescription("Search Workshop.codes repository of codes, or the wiki of articles")
         .addSubcommand((command) =>
           command
             .setName("codes")
+            .setNameLocalization("ko", "코드")
             .setDescription("Search for Workshop.codes posts")
             .addStringOption((option) =>
               option
@@ -209,10 +211,12 @@ export default class Search extends Command {
         .addSubcommand((command) =>
           command
             .setName("wiki")
+            .setNameLocalization("ko", "위키")
             .setDescription("Search for articles on the Workshop.codes wiki")
             .addStringOption((option) =>
               option
                 .setName("query")
+                .setNameLocalization("ko", "검색어")
                 .setDescription("Terms to search for")
                 .setRequired(true)
             )
