@@ -10,6 +10,8 @@ import { ApplicationCommandRegistry, Command } from "@sapphire/framework";
 import { MessageEmbed } from "discord.js";
 import type { ClientRequest } from "http";
 import OllieBotError from "../lib/OllieBotError";
+import { toSlug } from "../lib/utils/string_helper";
+import WorkshopCodesConstants from "../config/constants/workshop-codes-constants";
 
 export default class Search extends Command {
   public constructor(context: Command.Context, options: Command.Options) {
@@ -41,6 +43,9 @@ export default class Search extends Command {
     // Execute the search
     let data = await wscSearchRequest("/search.json", {
       "search": interaction.options.getString("query"),
+      "category": interaction.options.getString("category"),
+      "players": `${interaction.options.getNumber("num_players")}-${interaction.options.getNumber("num_players")}`,
+      "hero": interaction.options.getString("hero")
     });
 
     // Process the data
@@ -159,8 +164,46 @@ export default class Search extends Command {
             .addStringOption((option) =>
               option
                 .setName("query")
-                .setDescription("Terms to search for")
-                .setRequired(true)
+                .setNameLocalization("ko", "검색어")
+                .setDescription("Search terms to search for")
+                .setRequired(false)
+            )
+            .addStringOption((option) =>
+              option
+                .setName("category")
+                .setNameLocalization("ko", "카테고리")
+                .setDescription("Category of post")
+                .addChoices(
+                  ...WorkshopCodesConstants.Post.Categories.map((category) => { return { name: category.en, value: toSlug(category.en), nameLocalizations: { ko: category.ko } };})
+                )
+                .setRequired(false)
+            )
+            .addStringOption((option) =>
+              option
+                .setName("hero")
+                .setNameLocalization("ko", "영웅")
+                .setDescription("Overwatch hero included in post")
+                .addChoices(
+                  ...WorkshopCodesConstants.Post.Heroes.map((hero) => { return { name: hero.en, value: toSlug(hero.en), nameLocalizations: { ko: hero.ko } }; })
+                )
+                .setRequired(false)
+            )
+            .addStringOption((option) =>
+              option
+                .setName("map")
+                .setNameLocalization("ko", "전장")
+                .setDescription("Overwatch map supported by post")
+                .addChoices(
+                  ...WorkshopCodesConstants.Post.Maps.map((map) => { return { name: map.en, value: toSlug(map.en), nameLocalizations: { ko: map.ko } }; })
+                )
+                .setRequired(false)
+            )
+            .addNumberOption((option) =>
+              option
+                .setName("num_players")
+                .setNameLocalization("ko", "플레이어")
+                .setDescription("Number of supported players")
+                .setRequired(false)
             )
         )
         .addSubcommand((command) =>
