@@ -165,7 +165,7 @@ export default class Search extends Command {
               option
                 .setName("query")
                 .setNameLocalization("ko", "검색어")
-                .setDescription("Search terms to search for")
+                .setDescription("Terms to search for")
                 .setRequired(false)
             )
             .addStringOption((option) =>
