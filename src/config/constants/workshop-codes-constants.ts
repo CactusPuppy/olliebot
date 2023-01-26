@@ -808,6 +808,28 @@ export default {
         },
         "slug": "workshop-green-screen"
       }
+    ],
+    Sort: [
+      {
+        "en": "Created",
+        "ko": "등록일"
+      },
+      {
+        "en": "Updated",
+        "ko": "수정일"
+      },
+      {
+        "en": "On Fire",
+        "ko": "인기순"
+      },
+      {
+        "en": "Favorites",
+        "ko": "추천수"
+      },
+      {
+        "en": "Views",
+        "ko": "조회수"
+      }
     ]
   },
 };
