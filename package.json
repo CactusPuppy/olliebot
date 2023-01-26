@@ -13,7 +13,7 @@
   "dependencies": {
     "@discordjs/rest": "^0.5.0",
     "@sapphire/cli": "^1.2.0",
-    "@sapphire/framework": "^3.0.0-next.8ca7d7e.0",
+    "@sapphire/framework": "^3.0.0",
     "axios": "^0.27.2",
     "date-fns": "^2.28.0",
     "discord.js": "^13.11.0",
