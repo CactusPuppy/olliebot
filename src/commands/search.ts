@@ -44,7 +44,7 @@ export default class Search extends Command {
     let data = await wscSearchRequest("/search.json", {
       "search": interaction.options.getString("query"),
       "category": interaction.options.getString("category"),
-      "players": `${interaction.options.getNumber("num_players")}-${interaction.options.getNumber("num_players")}`,
+      "players": interaction.options.getNumber("num_players") ? `${interaction.options.getNumber("num_players")}-${interaction.options.getNumber("num_players")}` : null,
       "hero": interaction.options.getString("hero")
     });
 
@@ -185,9 +185,7 @@ export default class Search extends Command {
                 .setName("hero")
                 .setNameLocalization("ko", "영웅")
                 .setDescription("Overwatch hero included in post")
-                .addChoices(
-                  ...WorkshopCodesConstants.Post.Heroes.map((hero) => { return { name: hero.en, value: toSlug(hero.en), nameLocalizations: { ko: hero.ko } }; })
-                )
+                .setAutocomplete(true)
                 .setRequired(false)
             )
             .addStringOption((option) =>
@@ -195,9 +193,7 @@ export default class Search extends Command {
                 .setName("map")
                 .setNameLocalization("ko", "전장")
                 .setDescription("Overwatch map supported by post")
-                .addChoices(
-                  ...WorkshopCodesConstants.Post.Maps.map((map) => { return { name: map.en, value: toSlug(map.en), nameLocalizations: { ko: map.ko } }; })
-                )
+                .setAutocomplete(true)
                 .setRequired(false)
             )
             .addNumberOption((option) =>

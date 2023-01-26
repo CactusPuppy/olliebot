@@ -1,4 +1,5 @@
 export default {
+  SupportedLocales: ["en", "ko"] as const,
   Post: {
     Categories: [
       {
