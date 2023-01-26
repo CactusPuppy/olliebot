@@ -45,7 +45,8 @@ export default class Search extends Command {
       "search": interaction.options.getString("query"),
       "category": interaction.options.getString("category"),
       "players": interaction.options.getNumber("num_players") ? `${interaction.options.getNumber("num_players")}-${interaction.options.getNumber("num_players")}` : null,
-      "hero": interaction.options.getString("hero")
+      "hero": interaction.options.getString("hero"),
+      "map": interaction.options.getString("map")
     });
 
     // Process the data
