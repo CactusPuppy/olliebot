@@ -46,7 +46,8 @@ export default class Search extends Command {
       "category": interaction.options.getString("category"),
       "players": interaction.options.getNumber("num_players") ? `${interaction.options.getNumber("num_players")}-${interaction.options.getNumber("num_players")}` : null,
       "hero": interaction.options.getString("hero"),
-      "map": interaction.options.getString("map")
+      "map": interaction.options.getString("map"),
+      "sort": interaction.options.getString("sort")
     });
 
     // Process the data
@@ -196,6 +197,15 @@ export default class Search extends Command {
                 .setDescription("Overwatch map supported by post")
                 .setAutocomplete(true)
                 .setRequired(false)
+            )
+            .addStringOption((option) =>
+              option
+                .setName("sort")
+                .setNameLocalization("ko", "기준")
+                .setDescription("Sort results by...")
+                .addChoices(
+                  ...WorkshopCodesConstants.Post.Sort.map((sortOption) => { return { name: sortOption.en, value: toSlug(sortOption.en), nameLocalizations: { ko: sortOption.ko } }; })
+                )
             )
             .addNumberOption((option) =>
               option
