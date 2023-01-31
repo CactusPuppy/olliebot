@@ -7,7 +7,7 @@ import type { wscPost, wscWikiArticle } from "..";
 dotenv.config();
 
 import { ApplicationCommandRegistry, Command } from "@sapphire/framework";
-import { MessageEmbed } from "discord.js";
+import { Formatters, MessageEmbed, Util } from "discord.js";
 import type { ClientRequest } from "http";
 import OllieBotError from "../lib/OllieBotError";
 import { toSlug } from "../lib/utils/string_helper";
@@ -40,11 +40,40 @@ export default class Search extends Command {
   }
 
   private async codesSearchSubcommandRun(interaction: Command.ChatInputInteraction) {
+    const locale = ((<string[]><unknown>WorkshopCodesConstants.SupportedLocales).includes(interaction.locale)) ? <typeof WorkshopCodesConstants.SupportedLocales[number]>interaction.locale : "en";
+
+    // Validate hero and map, since Discord doesn't handle validation of those for us.
+    // Also get the hero and map objects for later fetching of English name
+    const selectedHeroValue = interaction.options.getString("hero");
+    const selectedMapValue = interaction.options.getString("map");
+    let selectedHeroObject: typeof WorkshopCodesConstants.Post.Heroes[number] | null = null;
+    let selectedMapObject: typeof WorkshopCodesConstants.Post.Maps[number] | null = null;
+
+    if (selectedHeroValue != null) {
+      selectedHeroObject = WorkshopCodesConstants.Post.Heroes.filter((heroJSON) => toSlug(heroJSON[locale], locale) === toSlug(selectedHeroValue, locale))[0];
+      if (!selectedHeroObject) {
+        await interaction.editReply(`Invalid hero filter specified: ${Util.escapeMarkdown(selectedHeroValue)}`);
+        return;
+      }
+    }
+
+    if (selectedMapValue != null) {
+      selectedMapObject = WorkshopCodesConstants.Post.Maps.filter((mapJSON) => toSlug(mapJSON[locale], locale) === toSlug(selectedMapValue, locale))[0];
+      if (!selectedMapObject) {
+        await interaction.editReply(`Invalid map filter specified: ${Util.escapeMarkdown(selectedMapValue)}`);
+        return;
+      }
+    }
+    // Custom validation of num_players
+    if (interaction.options.getNumber("num_players") && (<number>interaction.options.getNumber("num_players") <= 0 || <number>interaction.options.getNumber("num_players") > 12)) {
+      await interaction.editReply(`Invalid number of players: ${interaction.options.getNumber("num_players")}`);
+      return;
+    }
     // Execute the search
     let data = await wscSearchRequest("/search.json", {
       "search": interaction.options.getString("query"),
       "category": interaction.options.getString("category"),
-      "players": interaction.options.getNumber("num_players") ? `${interaction.options.getNumber("num_players")}-${interaction.options.getNumber("num_players")}` : null,
+      "players": (interaction.options.getNumber("num_players") && <number>interaction.options.getNumber("num_players") > 0) ? `${interaction.options.getNumber("num_players")}-${interaction.options.getNumber("num_players")}` : null,
       "hero": interaction.options.getString("hero"),
       "map": interaction.options.getString("map"),
       "sort": interaction.options.getString("sort")
