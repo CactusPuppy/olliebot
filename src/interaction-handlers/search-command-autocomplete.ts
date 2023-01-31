@@ -30,16 +30,17 @@ export class SearchCommandAutocompleteHandler extends InteractionHandler {
 
   private codesSearchAutocompleteRun(interaction: AutocompleteInteraction): ApplicationCommandOptionChoiceData[] {
     const focusedOption = interaction.options.getFocused(true);
+    const locale = ((<string[]><unknown>WorkshopCodesConstants.SupportedLocales).includes(interaction.locale)) ? <typeof WorkshopCodesConstants.SupportedLocales[number]>interaction.locale : "en";
     switch (focusedOption.name) {
       case "hero": {
         return WorkshopCodesConstants.Post.Heroes
-          .filter((heroObject) => ((interaction.locale in WorkshopCodesConstants.SupportedLocales) ? heroObject[<typeof WorkshopCodesConstants.SupportedLocales[number]>interaction.locale] : heroObject.en).startsWith(focusedOption.value))
-          .map((heroObject) => { return { name: heroObject.en, value: toSlug(heroObject.en), nameLocalizations: { ko: heroObject.ko } }; });
+          .filter((heroObject) => toSlug(heroObject[locale], locale).startsWith(toSlug(focusedOption.value, locale)))
+          .map((heroObject) => { return { name: heroObject[locale], value: heroObject[locale], nameLocalizations: { en: heroObject.en, ko: heroObject.ko } }; });
       }
       case "map": {
         return WorkshopCodesConstants.Post.Maps
-          .filter((mapObject) => ((interaction.locale in WorkshopCodesConstants.SupportedLocales) ? mapObject[<typeof WorkshopCodesConstants.SupportedLocales[number]>interaction.locale] : mapObject.en).startsWith(focusedOption.value))
-          .map((mapObject) => { return { name: mapObject.en, value: toSlug(mapObject.en), nameLocalizations: { ko: mapObject.ko } }; });
+          .filter((mapObject) => mapObject[locale].toLocaleLowerCase(locale).startsWith(focusedOption.value.toLocaleLowerCase(locale)))
+          .map((mapObject) => { return { name: mapObject[locale], value: mapObject[locale], nameLocalizations: { en: mapObject.en, ko: mapObject.ko } }; });
       }
     }
     return [] as ApplicationCommandOptionChoiceData[];
