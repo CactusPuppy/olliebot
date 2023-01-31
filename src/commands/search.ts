@@ -70,7 +70,7 @@ export default class Search extends Command {
       return;
     }
     // Execute the search
-    let data = await wscSearchRequest("/search.json", {
+    const { data: data0, searchURL } = await wscSearchRequest("/search.json", {
       "search": interaction.options.getString("query"),
       "category": interaction.options.getString("category"),
       "players": (interaction.options.getNumber("num_players") && <number>interaction.options.getNumber("num_players") > 0) ? `${interaction.options.getNumber("num_players")}-${interaction.options.getNumber("num_players")}` : null,
@@ -78,6 +78,7 @@ export default class Search extends Command {
       "map": interaction.options.getString("map"),
       "sort": interaction.options.getString("sort")
     });
+    let data = data0;
 
     // Process the data
     if (!Array.isArray(data)) {
@@ -132,10 +133,15 @@ export default class Search extends Command {
       content: "Here's what I found!",
       embeds: embeds
     });
+    setTimeout(() => interaction.followUp({
+      ephemeral: true,
+      content: `Didn't find what you were looking for? [See more results here](${Formatters.hideLinkEmbed(searchURL.toString())})`
+    }), 2000);
   }
 
   private async wikiSearchSubcommandRun(interaction: Command.ChatInputInteraction) {
-    let data = await wscSearchRequest(`/wiki/search/${encodeURIComponent(interaction.options.getString("query", true)).replace(".", " ")}.json`);
+    const { data: data0, searchURL } = await wscSearchRequest(`/wiki/search/${encodeURIComponent(interaction.options.getString("query", true)).replace(".", " ")}.json`);
+    let data = data0;
 
     // Process the data
     if (!Array.isArray(data)) {
@@ -181,6 +187,10 @@ export default class Search extends Command {
       content: "The best wiki article I could find was...",
       embeds: embeds
     });
+    setTimeout(() => interaction.followUp({
+      ephemeral: true,
+      content: `Didn't find what you were looking for? [See more results here](${Formatters.hideLinkEmbed(searchURL.toString())})`
+    }), 2000);
   }
 
   public override registerApplicationCommands(registry: ApplicationCommandRegistry) {
@@ -268,17 +278,24 @@ function truncate(str : string, n : number) {
   return str.length > n ? `${str.slice(0, n)}...` : str;
 }
 
-async function wscSearchRequest(path: string, params?: Record<string, string | boolean | null>): Promise<unknown> {
+function wscSearchURLFromPathAndParams(path: string, params?: Record<string, string | boolean | null>): URL {
   const searchURL = new URL("https://workshop.codes");
   searchURL.pathname = `${path.startsWith("/") ? "" : "/"}${path}`;
+
   if (params != undefined) {
     for (const key in params) {
       const value = params[key];
       if (value != null) {
-        searchURL.searchParams.set(key, encodeURIComponent(value.toString()));
+        searchURL.searchParams.set(key, value.toString());
       }
     }
   }
+
+  return searchURL;
+}
+
+async function wscSearchRequest(path: string, params?: Record<string, string | boolean | null>): Promise<{ data: unknown[], searchURL: URL }> {
+  const searchURL = wscSearchURLFromPathAndParams(path, params);
 
   const response = await axios.get(searchURL.toString())
     .catch((error) => {
@@ -301,5 +318,5 @@ async function wscSearchRequest(path: string, params?: Record<string, string | b
       throw new OllieBotError(message, errorCode);
     });
 
-  return response.data;
+  return { data: response.data, searchURL: wscSearchURLFromPathAndParams(path.replace(".json", ""), params) };
 }
