@@ -74,8 +74,8 @@ export default class Search extends Command {
       "search": interaction.options.getString("query"),
       "category": interaction.options.getString("category"),
       "players": (interaction.options.getNumber("num_players") && <number>interaction.options.getNumber("num_players") > 0) ? `${interaction.options.getNumber("num_players")}-${interaction.options.getNumber("num_players")}` : null,
-      "hero": interaction.options.getString("hero"),
-      "map": interaction.options.getString("map"),
+      "hero": selectedHeroObject ? toSlug(selectedHeroObject.en) : null,
+      "map": selectedMapObject ? toSlug(selectedMapObject.en) : null,
       "sort": interaction.options.getString("sort")
     });
     let data = data0;
