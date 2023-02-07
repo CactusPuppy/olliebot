@@ -70,7 +70,7 @@ export default class Search extends Command {
       return;
     }
     // Execute the search
-    const { data: data0, searchURL } = await wscSearchRequest("/search.json", {
+    const { data: searchData, searchURL } = await wscSearchRequest("/search.json", {
       "search": interaction.options.getString("query"),
       "category": interaction.options.getString("category"),
       "players": (interaction.options.getNumber("num_players") && <number>interaction.options.getNumber("num_players") > 0) ? `${interaction.options.getNumber("num_players")}-${interaction.options.getNumber("num_players")}` : null,
@@ -78,7 +78,7 @@ export default class Search extends Command {
       "map": selectedMapObject ? toSlug(selectedMapObject.en) : null,
       "sort": interaction.options.getString("sort")
     });
-    let data = data0;
+    let data = searchData;
 
     // Process the data
     if (!Array.isArray(data)) {
@@ -140,8 +140,8 @@ export default class Search extends Command {
   }
 
   private async wikiSearchSubcommandRun(interaction: Command.ChatInputInteraction) {
-    const { data: data0, searchURL } = await wscSearchRequest(`/wiki/search/${encodeURIComponent(interaction.options.getString("query", true)).replace(".", " ")}.json`);
-    let data = data0;
+    const { data: searchData, searchURL } = await wscSearchRequest(`/wiki/search/${encodeURIComponent(interaction.options.getString("query", true)).replace(".", " ")}.json`);
+    let data = searchData;
 
     // Process the data
     if (!Array.isArray(data)) {
