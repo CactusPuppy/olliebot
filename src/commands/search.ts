@@ -12,6 +12,7 @@ import type { ClientRequest } from "http";
 import OllieBotError from "../lib/OllieBotError";
 import { toSlug } from "../lib/utils/string_helper";
 import WorkshopCodesConstants from "../config/constants/workshop-codes-constants";
+import { ExampleSearches } from "../config/constants/example-searches";
 
 export default class Search extends Command {
   public constructor(context: Command.Context, options: Command.Options) {
@@ -70,7 +71,7 @@ export default class Search extends Command {
       return;
     }
     // Execute the search
-    const { data: data0, searchURL } = await wscSearchRequest("/search.json", {
+    const { data: searchData, searchURL, error } = await wscSearchRequest("/search.json", {
       "search": interaction.options.getString("query"),
       "category": interaction.options.getString("category"),
       "players": (interaction.options.getNumber("num_players") && <number>interaction.options.getNumber("num_players") > 0) ? `${interaction.options.getNumber("num_players")}-${interaction.options.getNumber("num_players")}` : null,
@@ -78,7 +79,13 @@ export default class Search extends Command {
       "map": selectedMapObject ? toSlug(selectedMapObject.en) : null,
       "sort": interaction.options.getString("sort")
     });
-    let data = data0;
+    if (error) {
+      interaction.editReply(error);
+      return;
+    }
+    let data = searchData;
+
+
 
     // Process the data
     if (!Array.isArray(data)) {
@@ -140,8 +147,12 @@ export default class Search extends Command {
   }
 
   private async wikiSearchSubcommandRun(interaction: Command.ChatInputInteraction) {
-    const { data: data0, searchURL } = await wscSearchRequest(`/wiki/search/${encodeURIComponent(interaction.options.getString("query", true)).replace(".", " ")}.json`);
-    let data = data0;
+    const { data: searchData, searchURL, error } = await wscSearchRequest(`/wiki/search/${encodeURIComponent(interaction.options.getString("query", true)).replace(".", " ")}.json`);
+    if (error) {
+      interaction.editReply(error);
+      return;
+    }
+    let data = searchData;
 
     // Process the data
     if (!Array.isArray(data)) {
@@ -294,7 +305,10 @@ function wscSearchURLFromPathAndParams(path: string, params?: Record<string, str
   return searchURL;
 }
 
-async function wscSearchRequest(path: string, params?: Record<string, string | boolean | null>): Promise<{ data: unknown[], searchURL: URL }> {
+async function wscSearchRequest(path: string, params?: Record<string, string | boolean | null>, errorOnNoParams = true): Promise<{ data: unknown[], searchURL: URL, error?: string }> {
+  if (params && errorOnNoParams && Object.values(params).every((param) => param == null))
+    return { data: [], searchURL: new URL("https://workshop.codes"), error: "It looks like you didn't provide any search options. Please include at least one search filter and try again.\n\nIf you're trying to use search terms or keywords, use the `query` value. For example, `/search codes query:" + ExampleSearches[(Math.random() * ExampleSearches.length) | 0] + "`"};
+
   const searchURL = wscSearchURLFromPathAndParams(path, params);
 
   const response = await axios.get(searchURL.toString())
