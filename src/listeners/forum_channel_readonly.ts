@@ -19,7 +19,7 @@ export class NoCommentsListener extends Listener {
   }
 
   public async run(message: Message) {
-    if (message.author.bot) return;
+    if (message.author == message.client.user) return;
     if (!NO_COMMENT_POSTS.includes(message.channelId)) return;
 
     if (!(message.channel instanceof ThreadChannel)) {
