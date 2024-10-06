@@ -6,8 +6,8 @@ import winston from "winston";
 import type { wscPost, wscWikiArticle } from "..";
 dotenv.config();
 
-import { ApplicationCommandRegistry, Awaitable, Command } from "@sapphire/framework";
-import { AutocompleteInteraction, BaseCommandInteraction, Formatters, MessageEmbed, Util } from "discord.js";
+import { ApplicationCommandRegistry, Command } from "@sapphire/framework";
+import { AutocompleteInteraction, Formatters, MessageEmbed, Util } from "discord.js";
 import type { ClientRequest } from "http";
 import OllieBotError from "../lib/OllieBotError";
 import { toSlug } from "../lib/utils/string_helper";
