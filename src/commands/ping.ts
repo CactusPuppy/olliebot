@@ -18,7 +18,7 @@ export default class Ping extends Command {
       { idHints: ["1006714349169147944"] });
   }
 
-  public async chatInputRun(interaction: Command.ChatInputInteraction) {
+  public async chatInputRun(interaction: Command.ChatInputCommandInteraction) {
     const msg = await interaction.reply({ content: "Ping?", ephemeral: true, fetchReply: true }) as Message;
     if (isMessageInstance(msg)) {
       const diff = msg.createdTimestamp - interaction.createdTimestamp;

@@ -1,13 +1,13 @@
-import { bold, time } from "@discordjs/builders";
+import { bold, hideLinkEmbed, time } from "@discordjs/builders";
 import axios from "axios";
 import { parseISO, set } from "date-fns";
 import dotenv from "dotenv";
 import winston from "winston";
-import type { wscPost, wscWikiArticle } from "..";
+import type { wscPost, wscWikiArticle } from "../types";
 dotenv.config();
 
 import { ApplicationCommandRegistry, Command } from "@sapphire/framework";
-import { AutocompleteInteraction, Formatters, MessageEmbed, Util } from "discord.js";
+import { AutocompleteInteraction, escapeMarkdown, EmbedBuilder } from "discord.js";
 import type { ClientRequest } from "http";
 import OllieBotError from "../lib/OllieBotError";
 import { toSlug } from "../lib/utils/string_helper";
@@ -23,7 +23,7 @@ export default class Search extends Command {
     });
   }
 
-  public override async chatInputRun(interaction: Command.ChatInputInteraction) {
+  public override async chatInputRun(interaction: Command.ChatInputCommandInteraction) {
     await interaction.deferReply();
     switch (interaction.options.getSubcommand(true)) {
       case "codes": {
@@ -73,7 +73,7 @@ export default class Search extends Command {
     return;
   }
 
-  private async codesSearchSubcommandRun(interaction: Command.ChatInputInteraction) {
+  private async codesSearchSubcommandRun(interaction: Command.ChatInputCommandInteraction) {
     // Execute the search
     const { data: searchData, searchURL, error } = await wscSearchCodesFromInteraction(interaction);
     if (error) {
@@ -104,7 +104,7 @@ export default class Search extends Command {
       const created = time(parseISO(post.created_at), "D");
 
       // Create and send the embed
-      const embed = new MessageEmbed()
+      const embed = new EmbedBuilder()
         .setTitle(`${post.title} by ${post.user.username}`)
         .setURL(`https://workshop.codes/${post.code}`)
         .setThumbnail(post.thumbnail)
@@ -138,7 +138,7 @@ export default class Search extends Command {
     if (searchURL) {
       setTimeout(() => interaction.followUp({
         ephemeral: true,
-        content: `Didn't find what you were looking for? [See more results here](${Formatters.hideLinkEmbed(searchURL.toString())})`
+        content: `Didn't find what you were looking for? [See more results here](${hideLinkEmbed(searchURL.toString())})`
       }), 2000);
     }
   }
@@ -156,7 +156,7 @@ export default class Search extends Command {
     })));
   }
 
-  private async wikiSearchSubcommandRun(interaction: Command.ChatInputInteraction) {
+  private async wikiSearchSubcommandRun(interaction: Command.ChatInputCommandInteraction) {
     const { data: searchData, searchURL, error } = await wscSearchWikiFromInteractionOptions(interaction);
     if (error) {
       interaction.editReply(error);
@@ -184,7 +184,7 @@ export default class Search extends Command {
       // Humanize last updated and last created date
       const lastUpdate = time(parseISO(article.updated_at), "R");
       // Create and send the embed
-      const embed = new MessageEmbed()
+      const embed = new EmbedBuilder()
         .setTitle(`${article.title}`)
         .setURL(`https://workshop.codes/wiki/articles/${article.slug}`)
         .setColor("#3fbf74")
@@ -211,7 +211,7 @@ export default class Search extends Command {
     if (searchURL) {
       setTimeout(() => interaction.followUp({
         ephemeral: true,
-        content: `Didn't find what you were looking for? [See more results here](${Formatters.hideLinkEmbed(searchURL.toString())})`
+        content: `Didn't find what you were looking for? [See more results here](${hideLinkEmbed(searchURL.toString())})`
       }), 2000);
     }
   }
@@ -259,7 +259,7 @@ export default class Search extends Command {
                 .setNameLocalization("ko", "카테고리")
                 .setDescription("Category of post")
                 .addChoices(
-                  ...WorkshopCodesConstants.Post.Categories.map((category) => { return { name: category.en, value: toSlug(category.en), nameLocalizations: { ko: category.ko } };})
+                  ...WorkshopCodesConstants.Post.Categories.map((category) => { return { name: category["en-US"], value: toSlug(category["en-US"]), nameLocalizations: { ko: category.ko } };})
                 )
                 .setRequired(false)
             )
@@ -285,7 +285,7 @@ export default class Search extends Command {
                 .setNameLocalization("ko", "기준")
                 .setDescription("Sort results by...")
                 .addChoices(
-                  ...WorkshopCodesConstants.Post.Sort.map((sortOption) => { return { name: sortOption.en, value: toSlug(sortOption.en), nameLocalizations: { ko: sortOption.ko } }; })
+                  ...WorkshopCodesConstants.Post.Sort.map((sortOption) => { return { name: sortOption["en-US"], value: toSlug(sortOption["en-US"]), nameLocalizations: { ko: sortOption.ko } }; })
                 )
             )
             .addNumberOption((option) =>
@@ -382,7 +382,7 @@ async function wscSearchCodesFromInteraction(interaction: Command.ChatInputInter
     if (!selectedHeroObject) {
       return {
         data: [],
-        error: `Invalid hero filter specified: ${Util.escapeMarkdown(selectedHeroValue)}`
+        error: `Invalid hero filter specified: ${escapeMarkdown(selectedHeroValue)}`
       };
     }
   }
@@ -392,7 +392,7 @@ async function wscSearchCodesFromInteraction(interaction: Command.ChatInputInter
     if (!selectedMapObject) {
       return {
         data: [],
-        error: `Invalid map filter specified: ${Util.escapeMarkdown(selectedMapValue)}`
+        error: `Invalid map filter specified: ${escapeMarkdown(selectedMapValue)}`
       };
     }
   }

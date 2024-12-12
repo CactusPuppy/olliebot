@@ -11,7 +11,7 @@ export const serviceName = process.env.SERVICE_NAME || "OllieBot";
 initializeDefaultLogger();
 
 const client = new SapphireClient({
-  intents: ["GUILDS", "GUILD_MESSAGES"],
+  intents: ["Guilds", "GuildMessages"],
   logger: {
     level: process.env.DEBUG == "true" ? LogLevel.Debug : LogLevel.Info
   }
@@ -27,7 +27,7 @@ function initializeDefaultLogger(): void {
         info.level = info.level.toLocaleUpperCase();
         return info;
       })(),
-      topOpts.colorize ? format.colorize() : format.uncolorize(),
+      topOpts instanceof Object && "colorize" in topOpts ? format.colorize() : format.uncolorize(),
       format.timestamp({
         format: "YYYY-MM-DD HH:mm:ss",
       }),
