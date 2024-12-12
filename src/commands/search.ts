@@ -344,7 +344,6 @@ export async function wscSearchCodesFromInteraction(interaction: Command.ChatInp
   if (!query?.trim()) {
     return {
       data: [],
-      error: `Query is empty`
     }
   }
 
@@ -364,7 +363,6 @@ export async function wscSearchWikiFromInteractionOptions(interaction: Command.C
   if (!query?.trim()) {
     return {
       data: [],
-      error: `Query is empty`
     }
   }
   return await wscSearchRequest(`/wiki/search/${encodeURIComponent(query).replace(".", " ")}.json`);

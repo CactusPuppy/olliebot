@@ -56,27 +56,28 @@ export class SearchCommandAutocompleteHandler extends InteractionHandler {
       case "query": {
         const { data, error } = await wscSearchCodesFromInteraction(interaction);
         if (error) {
-          return null;
+          throw new OllieBotError(`Failure to autocomplete in x subcommand: ${error}`, "elk");
         }
 
-       return (<wscPost[]> data).slice(0, 10).map((post) => ({
-          name: post.title,
+        return (<wscPost[]> data).slice(0, 10).map((post) => ({
+          name: `${post.title}${post.user.username == "elo-hell-archive" ? "" : " by " + post.user.username}`,
           value: post.code
         }));
       }
+
+      default:
+        return [];
     }
-    return [] as ApplicationCommandOptionChoiceData[];
   }
 
   private async wikiSearchAutocompleteRun(interaction: AutocompleteInteraction): Promise<ApplicationCommandOptionChoiceData[] | null> {
     const focusedOption = interaction.options.getFocused(true);
-    const locale = ((<string[]><unknown>WorkshopCodesConstants.SupportedLocales).includes(interaction.locale)) ? <typeof WorkshopCodesConstants.SupportedLocales[number]>interaction.locale : "en-US";
 
     switch (focusedOption.name) {
       case "query": {
         const { data, error } = await wscSearchWikiFromInteractionOptions(interaction);
         if (error) {
-          return null;
+          throw new OllieBotError(`Failure to autocomplete in x subcommand: ${error}`, "elk");
         }
 
         if (!Array.isArray(data)) {
@@ -89,7 +90,9 @@ export class SearchCommandAutocompleteHandler extends InteractionHandler {
           value: article.slug
         }));
       }
+
+      default:
+        return [];
     }
-    return [] as ApplicationCommandOptionChoiceData[];
   }
 }
