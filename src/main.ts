@@ -11,7 +11,7 @@ export const serviceName = process.env.SERVICE_NAME || "OllieBot";
 initializeDefaultLogger();
 
 const client = new SapphireClient({
-  intents: ["GUILDS", "GUILD_MESSAGES"],
+  intents: ["Guilds", "GuildMessages"],
   logger: {
     level: process.env.DEBUG == "true" ? LogLevel.Debug : LogLevel.Info
   }
@@ -27,7 +27,7 @@ function initializeDefaultLogger(): void {
         info.level = info.level.toLocaleUpperCase();
         return info;
       })(),
-      topOpts.colorize ? format.colorize() : format.uncolorize(),
+      topOpts instanceof Object && "colorize" in topOpts ? format.colorize() : format.uncolorize(),
       format.timestamp({
         format: "YYYY-MM-DD HH:mm:ss",
       }),
@@ -50,9 +50,9 @@ function initializeDefaultLogger(): void {
 
   // Log to files when not in production
   if (process.env.NODE_ENV !== "production") {
-    winston.add(new transports.File({ filename: "log/error.log", level: "error" }));
-    winston.add(new transports.File({ filename: "log/main.log" }));
-    winston.exceptions.handle(new transports.File({ filename: "log/exceptions.log" }));
+    // winston.add(new transports.File({ filename: "log/error.log", level: "error" }));
+    // winston.add(new transports.File({ filename: "log/main.log" }));
+    // winston.exceptions.handle(new transports.File({ filename: "log/exceptions.log" }));
   }
 
   // If a webhook is defined, use it
