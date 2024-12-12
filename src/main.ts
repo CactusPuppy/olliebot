@@ -50,9 +50,9 @@ function initializeDefaultLogger(): void {
 
   // Log to files when not in production
   if (process.env.NODE_ENV !== "production") {
-    winston.add(new transports.File({ filename: "log/error.log", level: "error" }));
-    winston.add(new transports.File({ filename: "log/main.log" }));
-    winston.exceptions.handle(new transports.File({ filename: "log/exceptions.log" }));
+    // winston.add(new transports.File({ filename: "log/error.log", level: "error" }));
+    // winston.add(new transports.File({ filename: "log/main.log" }));
+    // winston.exceptions.handle(new transports.File({ filename: "log/exceptions.log" }));
   }
 
   // If a webhook is defined, use it
