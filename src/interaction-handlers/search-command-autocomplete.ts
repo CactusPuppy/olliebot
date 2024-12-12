@@ -15,27 +15,30 @@ export class SearchCommandAutocompleteHandler extends InteractionHandler {
     });
   }
 
-  public override async run(interaction: AutocompleteInteraction) {
-    switch (interaction.options.getSubcommand()) {
-      case "codes": {
-        interaction.respond((await this.codesSearchAutocompleteRun(interaction)).slice(0, 25));
-        break;
-      }
-      case "wiki": {
-        interaction.respond((await this.wikiSearchAutocompleteRun(interaction)).slice(0, 25));
-        break;
-      }
-      default:
-        interaction.respond([]);
-    }
+  public override async run(interaction: AutocompleteInteraction, result: InteractionHandler.ParseResult<this>) {
+    return interaction.respond(result)
   }
 
   public override async parse(interaction: AutocompleteInteraction) {
     if (interaction.commandName !== "search") return this.none();
-    return this.some();
+    let results: ApplicationCommandOptionChoiceData[] | null = null;
+    switch (interaction.options.getSubcommand()) {
+      case "codes":
+        results = await this.codesSearchAutocompleteRun(interaction);
+        if (!results) return this.none();
+        return this.some(results);
+
+      case "wiki":
+        results = await this.wikiSearchAutocompleteRun(interaction);
+        if (!results) return this.none();
+        return this.some(results);
+
+      default:
+        return this.none();
+    }
   }
 
-  private async codesSearchAutocompleteRun(interaction: AutocompleteInteraction): Promise<ApplicationCommandOptionChoiceData[]> {
+  private async codesSearchAutocompleteRun(interaction: AutocompleteInteraction): Promise<ApplicationCommandOptionChoiceData[] | null> {
     const focusedOption = interaction.options.getFocused(true);
     const locale = ((<string[]><unknown>WorkshopCodesConstants.SupportedLocales).includes(interaction.locale)) ? <typeof WorkshopCodesConstants.SupportedLocales[number]>interaction.locale : "en-US";
     switch (focusedOption.name) {
@@ -53,7 +56,7 @@ export class SearchCommandAutocompleteHandler extends InteractionHandler {
       case "query": {
         const { data, error } = await wscSearchCodesFromInteraction(interaction);
         if (error) {
-          return [];
+          return null;
         }
 
        return (<wscPost[]> data).slice(0, 10).map((post) => ({
@@ -65,7 +68,7 @@ export class SearchCommandAutocompleteHandler extends InteractionHandler {
     return [] as ApplicationCommandOptionChoiceData[];
   }
 
-  private async wikiSearchAutocompleteRun(interaction: AutocompleteInteraction): Promise<ApplicationCommandOptionChoiceData[]> {
+  private async wikiSearchAutocompleteRun(interaction: AutocompleteInteraction): Promise<ApplicationCommandOptionChoiceData[] | null> {
     const focusedOption = interaction.options.getFocused(true);
     const locale = ((<string[]><unknown>WorkshopCodesConstants.SupportedLocales).includes(interaction.locale)) ? <typeof WorkshopCodesConstants.SupportedLocales[number]>interaction.locale : "en-US";
 
@@ -73,7 +76,7 @@ export class SearchCommandAutocompleteHandler extends InteractionHandler {
       case "query": {
         const { data, error } = await wscSearchWikiFromInteractionOptions(interaction);
         if (error) {
-          return [];
+          return null;
         }
 
         if (!Array.isArray(data)) {
