@@ -15,7 +15,7 @@ import WorkshopCodesConstants from "../config/constants/workshop-codes-constants
 import { ExampleSearches } from "../config/constants/example-searches";
 
 export default class Search extends Command {
-  public constructor(context: Command.Context, options: Command.Options) {
+  public constructor(context: Command.LoaderContext, options: Command.Options) {
     super(context, {
       ...options,
       name: "search",
