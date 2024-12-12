@@ -40,39 +40,6 @@ export default class Search extends Command {
     return true;
   }
 
-  public override async autocompleteRun(interaction: AutocompleteInteraction) {
-    const focusedOption = interaction.options.getFocused(true);
-    switch (interaction.options.getSubcommand(true)) {
-      case "codes": {
-        switch (focusedOption.name) {
-          case "query": {
-            await this.codesSearchSubcommandQueryAutocompleteRun(interaction, focusedOption.value);
-            break;
-          }
-          default: {
-            return;
-          }
-        }
-        break;
-      }
-      case "wiki": {
-        switch (focusedOption.name) {
-          case "query": {
-            await this.wikiSearchSubcommandQueryAutocompleteRun(interaction, focusedOption.value);
-            break;
-          }
-          default: {
-            return;
-          }
-        }
-        break;
-      }
-      default:
-        return;
-    }
-    return;
-  }
-
   private async codesSearchSubcommandRun(interaction: Command.ChatInputCommandInteraction) {
     // Execute the search
     const { data: searchData, searchURL, error } = await wscSearchCodesFromInteraction(interaction);
@@ -143,19 +110,6 @@ export default class Search extends Command {
     }
   }
 
-  private async codesSearchSubcommandQueryAutocompleteRun(interaction: Command.AutocompleteInteraction, query: string) {
-    const { data, error } = await wscSearchCodesFromInteraction(interaction);
-    if (error) {
-      await interaction.respond([]);
-      return;
-    }
-
-    await interaction.respond((<wscPost[]> data).slice(0, 10).map((post) => ({
-      name: post.title,
-      value: post.code
-    })));
-  }
-
   private async wikiSearchSubcommandRun(interaction: Command.ChatInputCommandInteraction) {
     const { data: searchData, searchURL, error } = await wscSearchWikiFromInteractionOptions(interaction);
     if (error) {
@@ -214,24 +168,6 @@ export default class Search extends Command {
         content: `Didn't find what you were looking for? [See more results here](${hideLinkEmbed(searchURL.toString())})`
       }), 2000);
     }
-  }
-
-  private async wikiSearchSubcommandQueryAutocompleteRun(interaction: Command.AutocompleteInteraction, query: string) {
-    const { data, error } = await wscSearchRequest(`/wiki/search/${encodeURIComponent(query).replace(".", " ")}.json`);
-    if (error) {
-      await interaction.respond([]);
-      return;
-    }
-
-    if (!Array.isArray(data)) {
-      const error = new OllieBotError(`Expected array from Workshop.codes, got ${typeof data} instead`, "Wombat");
-      throw error;
-    }
-
-    await interaction.respond((<wscWikiArticle[]> data).slice(0, 10).map((article) => ({
-      name: article.title,
-      value: article.slug,
-    })))
   }
 
   public override registerApplicationCommands(registry: ApplicationCommandRegistry) {
@@ -337,7 +273,7 @@ function wscSearchURLFromPathAndParams(path: string, params?: Record<string, str
   return searchURL;
 }
 
-async function wscSearchRequest(path: string, params?: Record<string, string | boolean | null>, errorOnNoParams = true): Promise<{ data: unknown[], searchURL?: URL, error?: string }> {
+export async function wscSearchRequest(path: string, params?: Record<string, string | boolean | null>, errorOnNoParams = true): Promise<{ data: unknown[], searchURL?: URL, error?: string }> {
   if (params && errorOnNoParams && Object.values(params).every((param) => param == null))
     return { data: [], searchURL: new URL("https://workshop.codes"), error: "It looks like you didn't provide any search options. Please include at least one search filter and try again.\n\nIf you're trying to use search terms or keywords, use the `query` value. For example, `/search codes query:" + ExampleSearches[(Math.random() * ExampleSearches.length) | 0] + "`"};
 
@@ -367,8 +303,8 @@ async function wscSearchRequest(path: string, params?: Record<string, string | b
   return { data: response.data, searchURL: wscSearchURLFromPathAndParams(path.replace(".json", ""), params) };
 }
 
-async function wscSearchCodesFromInteraction(interaction: Command.ChatInputInteraction | Command.AutocompleteInteraction): Promise<{ data: unknown[], searchURL?: URL, error?: string }> {
-  const locale = ((<string[]><unknown>WorkshopCodesConstants.SupportedLocales).includes(interaction.locale)) ? <typeof WorkshopCodesConstants.SupportedLocales[number]>interaction.locale : "en";
+export async function wscSearchCodesFromInteraction(interaction: Command.ChatInputCommandInteraction | Command.AutocompleteInteraction): Promise<{ data: unknown[], searchURL?: URL, error?: string }> {
+  const locale = ((<string[]><unknown>WorkshopCodesConstants.SupportedLocales).includes(interaction.locale)) ? <typeof WorkshopCodesConstants.SupportedLocales[number]>interaction.locale : "en-US";
 
   // Validate hero and map, since Discord doesn't handle validation of those for us.
   // Also get the hero and map objects for later fetching of English name
@@ -417,13 +353,13 @@ async function wscSearchCodesFromInteraction(interaction: Command.ChatInputInter
     "search": query,
     "category": interaction.options.getString("category"),
     "players": (interaction.options.getNumber("num_players") && <number>interaction.options.getNumber("num_players") > 0) ? `${interaction.options.getNumber("num_players")}-${interaction.options.getNumber("num_players")}` : null,
-    "hero": selectedHeroObject ? toSlug(selectedHeroObject.en) : null,
-    "map": selectedMapObject ? toSlug(selectedMapObject.en) : null,
+    "hero": selectedHeroObject ? toSlug(selectedHeroObject["en-US"]) : null,
+    "map": selectedMapObject ? toSlug(selectedMapObject["en-US"]) : null,
     "sort": interaction.options.getString("sort")
   });
 }
 
-async function wscSearchWikiFromInteractionOptions(interaction: Command.ChatInputInteraction | Command.AutocompleteInteraction): Promise<{ data: unknown[], searchURL?: URL, error?: string }> {
+export async function wscSearchWikiFromInteractionOptions(interaction: Command.ChatInputCommandInteraction | Command.AutocompleteInteraction): Promise<{ data: unknown[], searchURL?: URL, error?: string }> {
   const query = interaction.options.getString("query", true);
   if (!query?.trim()) {
     return {
