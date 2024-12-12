@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@discordjs/rest": "^2.4.0",
+    "@prisma/client": "6.0.1",
     "@sapphire/cli": "^1.9.3",
     "@sapphire/framework": "^5.3.1",
     "axios": "^0.27.2",
@@ -26,7 +27,9 @@
     "@types/node": "^20.16.0",
     "@types/validator": "^13.12.2",
     "eslint": "^9.16.0",
+    "prisma": "^6.0.1",
     "tsc-watch": "^6.2.1",
+    "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.18.0"
   },
