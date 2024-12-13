@@ -3,6 +3,10 @@
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
 
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+
     "outDir": "dist",
     /* Projects */
     // "incremental": true,                              /* Enable incremental compilation */

@@ -9,10 +9,10 @@ dotenv.config();
 import { ApplicationCommandRegistry, Command } from "@sapphire/framework";
 import { AutocompleteInteraction, escapeMarkdown, EmbedBuilder } from "discord.js";
 import type { ClientRequest } from "http";
-import OllieBotError from "../lib/OllieBotError";
-import { toSlug } from "../lib/utils/string_helper";
-import WorkshopCodesConstants from "../config/constants/workshop-codes-constants";
-import { ExampleSearches } from "../config/constants/example-searches";
+import OllieBotError from "@/lib/OllieBotError";
+import { toSlug, truncate } from "@/lib/utils/string_helper";
+import WorkshopCodesConstants from "@/config/constants/workshop-codes-constants";
+import { ExampleSearches } from "@/config/constants/example-searches";
 
 export default class Search extends Command {
   public constructor(context: Command.LoaderContext, options: Command.Options) {
@@ -253,10 +253,6 @@ export default class Search extends Command {
   }
 }
 
-function truncate(str : string, n : number) {
-  return str.length > n ? `${str.slice(0, n)}...` : str;
-}
-
 function wscSearchURLFromPathAndParams(path: string, params?: Record<string, string | boolean | null>): URL {
   const searchURL = new URL("https://workshop.codes");
   searchURL.pathname = `${path.startsWith("/") ? "" : "/"}${path}`;
@@ -314,7 +310,7 @@ export async function wscSearchCodesFromInteraction(interaction: Command.ChatInp
   let selectedMapObject: typeof WorkshopCodesConstants.Post.Maps[number] | null = null;
 
   if (selectedHeroValue != null) {
-    selectedHeroObject = WorkshopCodesConstants.Post.Heroes.filter((heroJSON) => toSlug(heroJSON[locale], locale) === toSlug(selectedHeroValue, locale))[0];
+    selectedHeroObject = WorkshopCodesConstants.Post.Heroes.filter((heroJSON) => toSlug(heroJSON[locale] ?? heroJSON["en-US"], locale) === toSlug(selectedHeroValue, locale))[0];
     if (!selectedHeroObject) {
       return {
         data: [],
@@ -324,7 +320,7 @@ export async function wscSearchCodesFromInteraction(interaction: Command.ChatInp
   }
 
   if (selectedMapValue != null) {
-    selectedMapObject = WorkshopCodesConstants.Post.Maps.filter((mapJSON) => toSlug(mapJSON[locale], locale) === toSlug(selectedMapValue, locale))[0];
+    selectedMapObject = WorkshopCodesConstants.Post.Maps.filter((mapJSON) => toSlug(mapJSON[locale] ?? mapJSON["en-US"], locale) === toSlug(selectedMapValue, locale))[0];
     if (!selectedMapObject) {
       return {
         data: [],

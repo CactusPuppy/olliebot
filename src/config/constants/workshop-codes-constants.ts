@@ -101,8 +101,24 @@ export default {
         }
       },
       {
+        "en-US": "Hazard",
+        "overwatch_2": true,
+        "category": {
+          "en-US": "Tank",
+          "ko": "탱커"
+        }
+      },
+      {
         "en-US": "Junker Queen",
         "ko": "정커퀸",
+        "overwatch_2": true,
+        "category": {
+          "en-US": "Tank",
+          "ko": "탱커"
+        }
+      },
+      {
+        "en-US": "Mauga",
         "overwatch_2": true,
         "category": {
           "en-US": "Tank",
@@ -304,6 +320,13 @@ export default {
         }
       },
       {
+        "en-US": "Venture",
+        "category": {
+          "en-US": "Damage",
+          "ko": "딜러"
+        }
+      },
+      {
         "en-US": "Widowmaker",
         "ko": "위도우메이커",
         "category": {
@@ -330,6 +353,13 @@ export default {
       {
         "en-US": "Brigitte",
         "ko": "브리기테",
+        "category": {
+          "en-US": "Support",
+          "ko": "지원"
+        }
+      },
+      {
+        "en-US": "Juno",
         "category": {
           "en-US": "Support",
           "ko": "지원"
@@ -636,6 +666,47 @@ export default {
           "ko": "밀기"
         },
         "slug": "esperanca"
+      },
+      {
+        "en-US": "Runasapi",
+        "overwatch_2": true,
+        "type": {
+          "en-US": "Push",
+          "ko": "밀기"
+        },
+        "slug": "runasapi"
+      },
+      {
+        "en-US": "New Junk City",
+        "overwatch_2": true,
+        "type": {
+          "en-US": "Flashpoint",
+        },
+        "slug": "new-junk-city"
+      },
+      {
+        "en-US": "Suravasa",
+        "overwatch_2": true,
+        "type": {
+          "en-US": "Flashpoint",
+        },
+        "slug": "suravasa"
+      },
+      {
+        "en-US": "Hanaoka",
+        "overwatch_2": true,
+        "type": {
+          "en-US": "Clash",
+        },
+        "slug": "hanaoka"
+      },
+      {
+        "en-US": "Throne of Anubis",
+        "overwatch_2": true,
+        "type": {
+          "en-US": "Clash",
+        },
+        "slug": "throne-of-anubis"
       },
       {
         "en-US": "Black Forest",

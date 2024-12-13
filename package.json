@@ -26,18 +26,20 @@
     "@eslint/js": "^9.16.0",
     "@types/node": "^20.16.0",
     "@types/validator": "^13.12.2",
+    "concurrently": "^9.1.0",
     "eslint": "^9.16.0",
     "prisma": "^6.0.1",
+    "tsc-alias": "^1.8.10",
     "tsc-watch": "^6.2.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.18.0"
   },
   "scripts": {
-    "build": "yarn tsc",
+    "build": "yarn tsc && tsc-alias -p tsconfig.json",
     "start": "node dist/main.js",
     "deploy": "yarn build && node dist/deploy_commands.js",
     "preview": "yarn build && yarn start",
-    "watch": "yarn tsc-watch"
+    "watch": "concurrently --kill-others \"tsc -w\" \"tsc-alias -w\""
   }
 }

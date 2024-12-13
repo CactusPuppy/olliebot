@@ -44,19 +44,19 @@ export class SearchCommandAutocompleteHandler extends InteractionHandler {
     switch (focusedOption.name) {
       case "hero": {
         return WorkshopCodesConstants.Post.Heroes
-          .filter((heroObject) => toSlug(heroObject[locale], locale).startsWith(toSlug(focusedOption.value, locale)))
-          .map((heroObject) => { return { name: heroObject[locale], value: heroObject[locale], nameLocalizations: { "en-US": heroObject["en-US"], ko: heroObject.ko } }; });
+          .filter((heroObject) => toSlug(heroObject[locale] ?? heroObject["en-US"], locale).startsWith(toSlug(focusedOption.value, locale)))
+          .map((heroObject) => { return { name: heroObject[locale] ?? heroObject["en-US"], value: heroObject[locale] ?? heroObject["en-US"], nameLocalizations: { "en-US": heroObject["en-US"], ko: heroObject.ko } }; });
       }
       case "map": {
         return WorkshopCodesConstants.Post.Maps
-          .filter((mapObject) => mapObject[locale].toLocaleLowerCase(locale).startsWith(focusedOption.value.toLocaleLowerCase(locale)))
-          .map((mapObject) => { return { name: mapObject[locale], value: mapObject[locale], nameLocalizations: { "en-US": mapObject["en-US"], ko: mapObject.ko } }; });
+          .filter((mapObject) => mapObject[locale]?.toLocaleLowerCase(locale).startsWith(focusedOption.value.toLocaleLowerCase(locale)))
+          .map((mapObject) => { return { name: mapObject[locale] ?? mapObject["en-US"], value: mapObject[locale] ?? mapObject["en-US"], nameLocalizations: { "en-US": mapObject["en-US"], ko: mapObject.ko } }; });
       }
 
       case "query": {
         const { data, error } = await wscSearchCodesFromInteraction(interaction);
         if (error) {
-          throw new OllieBotError(`Failure to autocomplete in x subcommand: ${error}`, "elk");
+          throw new OllieBotError(`Failure to autocomplete in x subcommand: ${error}`, "Elk");
         }
 
         return (<wscPost[]> data).slice(0, 10).map((post) => ({
