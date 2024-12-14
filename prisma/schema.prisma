@@ -6,12 +6,12 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model faq {
   id          Int         @id @default(autoincrement())
   name        String
-  content     String
+  content     String      @db.Text
 }

@@ -21,7 +21,7 @@ export default class FAQ extends Command {
           .addStringOption((option) =>
             option
               .setName("name")
-              .setDescription("Associated name of the FAQ")
+              .setDescription("The name of the FAQ")
               .setRequired(true)
               .setAutocomplete(true)
           )

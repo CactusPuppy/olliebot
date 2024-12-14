@@ -1,19 +1,21 @@
-import { ChatInputCommandErrorPayload, Events, Listener } from "@sapphire/framework";
+import { ChatInputCommandErrorPayload, Events, InteractionHandlerError, Listener } from "@sapphire/framework";
 import winston from "winston";
 import OllieBotError from "../lib/OllieBotError";
+import { Interaction } from "discord.js";
 
 export class CommandErrorListener extends Listener {
   public constructor(context: Listener.LoaderContext, options: Listener.Options) {
     super(context, {
       ...options,
-      event: Events.ChatInputCommandError
+      event: Events.InteractionHandlerError
     });
   }
 
-  public run(error: Error | OllieBotError, payload: ChatInputCommandErrorPayload) {
+  public run(error: Error | OllieBotError, payload: InteractionHandlerError) {
     const interaction = payload.interaction;
-    winston.error(`${error.message}\n${error.stack || ""}`);
+    if (!interaction.isModalSubmit()) return;
     if (interaction.replied) return;
+    winston.error(`${error.message}\n${error.stack || ""}`);
     const errorMessage = `Something went wrong. Sorry about that!\n\nError code: ${error instanceof OllieBotError ? error.errorCode : "Otter"}`;
     if (interaction.deferred) {
       interaction.editReply(errorMessage);

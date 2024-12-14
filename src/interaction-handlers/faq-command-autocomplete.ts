@@ -16,7 +16,7 @@ export class FAQCommandAutocompleteHandler extends InteractionHandler {
   }
 
   public override async parse(interaction: AutocompleteInteraction) {
-    if (interaction.commandName !== "faq") return this.none();
+    if (!["faq", "edit_faq", "delete_faq"].includes(interaction.commandName)) return this.none();
     const focusedOption = interaction.options.getFocused(true);
     switch (focusedOption.name) {
       case "name":
