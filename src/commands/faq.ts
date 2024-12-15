@@ -1,7 +1,7 @@
 import { prisma } from "@/db/client";
 import OllieBotError from "@/lib/OllieBotError";
 import { ApplicationCommandRegistry, Awaitable, ChatInputCommand, Command } from "@sapphire/framework";
-import { ChatInputCommandInteraction, escapeInlineCode, inlineCode } from "discord.js";
+import { ChatInputCommandInteraction, escapeInlineCode, inlineCode, userMention } from "discord.js";
 
 export default class FAQ extends Command {
   public constructor(context: Command.LoaderContext, options: Command.Options) {
@@ -25,6 +25,12 @@ export default class FAQ extends Command {
               .setRequired(true)
               .setAutocomplete(true)
           )
+          .addUserOption((option) =>
+            option
+              .setName("user")
+              .setDescription("(Optional) The user to ping in the FAQ response")
+              .setRequired(false)
+          );
       }, {
         guildIds: process.env.DISCORD_GUILD_ID != null ? [process.env.DISCORD_GUILD_ID] : undefined
       });
@@ -33,6 +39,7 @@ export default class FAQ extends Command {
   public override async chatInputRun(interaction: ChatInputCommandInteraction, _: ChatInputCommand.RunContext): Promise<boolean> {
     await interaction.deferReply();
     const nameQuery = interaction.options.getString("name", true);
+    const user = interaction.options.getUser("user");
 
     const results = await prisma.faq.findMany({
       where: {
@@ -48,7 +55,12 @@ export default class FAQ extends Command {
       interaction.editReply(inlineCode(`No FAQ found for ${nameQuery}`));
       return true;
     }
-    await interaction.editReply(results[0].content);
+    await interaction.editReply({
+      content: `${user ? `${userMention(user.id)} ` : ""}${results[0].content}`,
+      allowedMentions: {
+        users: user ? [user.id] : []
+      }
+    });
     if (results.length > 1) {
       setTimeout(() => interaction.followUp({
         ephemeral: true,
