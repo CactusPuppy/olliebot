@@ -27,7 +27,7 @@ export class FAQCommandAutocompleteHandler extends InteractionHandler {
             }
           }
         });
-        return this.some(matches.map((faq) => ({ name: faq.name, value: faq.name })));
+        return this.some(matches.slice(0, 10).map((faq) => ({ name: faq.name, value: faq.name })));
     }
 
     return this.none();
