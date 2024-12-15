@@ -7,7 +7,7 @@ export default class AddFAQ extends Command {
   public constructor(context: Command.LoaderContext, options: Command.Options) {
     super(context, {
       ...options,
-      name: "add_faq",
+      name: "faq-add",
       description: "Creates an easily accessible a response to a frequently asked question via a short name",
       detailedDescription: "The FAQ command associates long, oft-repeated explanations, descriptions, or other information with a shorter name. The shortname can be used to prompt the bot to repost the longer message."
     })
@@ -19,7 +19,8 @@ export default class AddFAQ extends Command {
           .setName(this.name)
           .setDescription(this.description)
       }, {
-        guildIds: process.env.DISCORD_GUILD_ID != null ? [process.env.DISCORD_GUILD_ID] : undefined
+        guildIds: process.env.DISCORD_GUILD_ID != null ? [process.env.DISCORD_GUILD_ID] : undefined,
+        idHints: process.env.ADD_FAQ_COMMAND_ID != null ? [process.env.ADD_FAQ_COMMAND_ID] : undefined
       });
   }
 
